@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>謝惠貞 - 個人專業履歷</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fdfaf6; color: #4a4a4a; font-family: 'Segoe UI', sans-serif; }
+        /* 彈出視窗動畫 */
+        #modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="p-6 md:p-12 max-w-3xl mx-auto">
+
+    <!-- 姓名與定位 -->
+    <header class="mb-12 border-b border-stone-200 pb-8">
+        <h1 class="text-4xl font-bold text-stone-800 mb-2">謝惠貞 HSIEH, HUI-CHEN</h1>
+        <p class="text-lg italic text-stone-600">衛生管理與行政專業人才 | 數位化食安稽查專家</p>
+        
+        <!-- 下載履歷按鈕 -->
+        <div class="mt-6">
+            <button onclick="toggleModal(true)" class="inline-block bg-stone-800 text-white px-6 py-2 rounded-lg hover:bg-stone-700 transition duration-300 shadow-md">
+                📥 下載完整版履歷 (DOCX)
+            </button>
+        </div>
+    </header>
+
+    <!-- 關於我 -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-stone-800 mb-4">關於我</h2>
+        <p class="leading-relaxed text-justify">
+            擁有超過 20 年跨領域產業經驗，從金融業風險評估、電子製造業 SPC 製程監控到餐飲現場管理。具備深厚的食安管理知識與數位辦公整合能力。目前致力於將傳統食安稽核流程與 AI 科技結合，提升組織管理效能與風險控管能力。
+        </p>
+    </section>
+
+    <!-- 證照 -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-stone-800 mb-6">專業證照</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-white p-3 rounded border border-stone-200 text-sm">✅ HACCP 60 AB 級證書</div>
+            <div class="bg-white p-3 rounded border border-stone-200 text-sm">✅ 中餐烹飪丙級技術士</div>
+            <div class="bg-white p-3 rounded border border-stone-200 text-sm">✅ 安全衛生實習證書</div>
+            <div class="bg-white p-3 rounded border border-stone-200 text-sm">✅ QC 初階 / SPC 統計製程管制訓練</div>
+            <div class="bg-white p-3 rounded border border-stone-200 text-sm">✅ 多元化餐飲烘焙訓練 380H</div>
+        </div>
+    </section>
+
+    <!-- 專業技能 -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-stone-800 mb-6">專業技能</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-4 shadow-sm border border-stone-100">
+                <h3 class="font-bold text-stone-800 mb-2">食安與品質</h3>
+                <p class="text-sm">HACCP 稽核、SOP 標準化制定、風險控管</p>
+            </div>
+            <div class="bg-white p-4 shadow-sm border border-stone-100">
+                <h3 class="font-bold text-stone-800 mb-2">數位轉型</h3>
+                <p class="text-sm">AI 生成工具應用、數位辦公自動化、數據分析</p>
+            </div>
+            <div class="bg-white p-4 shadow-sm border border-stone-100">
+                <h3 class="font-bold text-stone-800 mb-2">管理與營運</h3>
+                <p class="text-sm">人員排班、門市客訴處理、跨部門協調、庫存管理</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品/經歷展示 -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-stone-800 mb-6">實務經驗與作品集</h2>
+        <div class="space-y-6">
+            <div class="bg-stone-100 p-6 rounded">
+                <h3 class="font-bold text-lg text-stone-800">食品衛生稽核與行政管理</h3>
+                <p class="text-sm text-stone-700 mt-2">執行 HACCP 食品安全稽核，建立衛生 SOP 流程，並整合數位化工具進行出餐流程管控。</p>
+            </div>
+            <div class="bg-stone-100 p-6 rounded">
+                <h3 class="font-bold text-lg text-stone-800">製程監控與自動化維護</h3>
+                <p class="text-sm text-stone-700 mt-2">運用 SPC 數據分析處理製程異常，落實品質管控，並具備操作自動化機台維護經驗。</p>
+            </div>
+            <div class="bg-stone-100 p-6 rounded">
+                <h3 class="font-bold text-lg text-stone-800">AI 應用與行政優化</h3>
+                <p class="text-sm text-stone-700 mt-2">完成健行科大數位辦公與 AI 應用培訓（400小時），將科技思維導入日常行政作業與管理任務。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡方式 -->
+    <footer class="border-t border-stone-200 pt-8 text-center text-stone-500">
+        <h2 class="text-xl font-semibold text-stone-800 mb-4">聯絡資訊</h2>
+        <p class="text-lg">手機：<span class="text-stone-800 font-medium">0955-515-005</span></p>
+        <p class="text-lg">Email：<span class="text-stone-800 font-medium">s7887632@gmail.com</span></p>
+        <p class="mt-6 text-sm italic text-stone-400">竭誠歡迎聯繫，期待發揮跨領域管理專長。</p>
+    </footer>
+
+    <!-- 彈出視窗 Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h3 class="text-xl font-bold mb-4">下載履歷表</h3>
+            <p class="mb-6 text-stone-600">請點擊下方連結取得檔案：</p>
+            <a href="請填入您的雲端連結" target="_blank" class="block bg-stone-800 text-white py-2 rounded hover:bg-stone-700 mb-4">開啟履歷連結</a>
+            <button onclick="toggleModal(false)" class="text-stone-400 hover:text-stone-600 text-sm">關閉</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(show) {
+            const modal = document.getElementById('modal');
+            if (show) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+    </script>
+</body>
+</html>
