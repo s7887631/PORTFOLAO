@@ -7,7 +7,7 @@
     <!-- 載入 Tailwind CSS 用於現代化排版與樣式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Google Fonts 提升中英文字體質感 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=300;400;500;700;900&family=Playfair+Display:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
         body { 
@@ -31,6 +31,39 @@
             scrollbar-width: none;
         }
     </style>
+    <script>
+        /**
+         * 處理證照圖片加載失敗時的防破圖替換技術
+         * @param {HTMLImageElement} imgElement - 觸發錯誤的圖片物件
+         * @param {string} certShortName - 證照名稱縮寫
+         */
+        function handleImageError(imgElement, certShortName) {
+            // 隱藏原始 img 標籤以避免顯示瀏覽器的「破圖圖示」
+            imgElement.style.display = 'none';
+            
+            // 建立一個高質感的虛擬證照預覽卡片 (SVG 邊框 + 徽章 + 精美文字)
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.className = 'absolute inset-0 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-stone-50 to-stone-100 text-stone-700 text-center select-none';
+            fallbackDiv.innerHTML = `
+                <div class="w-full h-full border-4 border-double border-stone-300 rounded-lg flex flex-col items-center justify-center p-3">
+                    <!-- 優雅的證書勳章圖示 -->
+                    <svg class="w-12 h-12 text-amber-700/80 mb-2" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 009 11M9 11V9m0 10a12.006 12.006 0 003.582-7.89H12m0 0V9m0 0a9 9 0 10-9 9m9-9a9 9 0 009 9"/>
+                    </svg>
+                    <span class="text-[10px] uppercase tracking-widest text-stone-400 font-bold mb-1">Professional Certification</span>
+                    <span class="font-bold text-xs text-stone-800 px-2 py-1 bg-stone-200/50 rounded-md border border-stone-200 max-w-[90%] truncate">
+                        ${certShortName}
+                    </span>
+                    <span class="text-[10px] text-amber-800 mt-2 flex items-center gap-1 font-medium">
+                        🔎 點擊看 PDF 證明
+                    </span>
+                </div>
+            `;
+            
+            // 將建構好的虛擬證照置入父層容器中
+            imgElement.parentNode.appendChild(fallbackDiv);
+        }
+    </script>
 </head>
 <body class="relative min-h-screen selection:bg-stone-200 selection:text-stone-900">
 
@@ -99,7 +132,7 @@
                     專業證照與資格 <span class="text-xs text-stone-400 font-normal uppercase tracking-wider">Certificates</span>
                 </h2>
                 <span class="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full font-medium border border-amber-100">
-                    💡 點擊證照可放大檢視高畫質證書
+                    💡 點擊證照可線上檢視 PDF 證書檔案
                 </span>
             </div>
 
@@ -110,7 +143,7 @@
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
                     <!-- 圖片容器 ( aspect-[1.414/1] 為 A4 橫式完美比例 ) -->
                     <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer" 
-                         onclick="openLightbox('HACCP 60 AB 級安全管制系統研習證書', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/portfolio01.pdf', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/haccp_cert.jpg')">
+                         onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/haccp.pdf', '_blank')">
                         <!-- 證照縮圖 (採用 onerror 防錯機制，若無實際圖片則自動套用下方美麗的 fallback 樣式) -->
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/haccp_cert.jpg" 
                              alt="HACCP 60 AB 級證書" 
@@ -118,9 +151,11 @@
                              onerror="handleImageError(this, 'HACCP 60 AB')">
                         <!-- 懸停遮罩 -->
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
-                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                點擊放大檢視
+                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                </svg>
+                                線上查看 PDF
                             </span>
                         </div>
                         <span class="absolute top-2 left-2 text-[10px] tracking-wider font-bold uppercase bg-red-800 text-white px-2 py-0.5 rounded-md">
@@ -143,15 +178,17 @@
                 <!-- 證照 2 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
                     <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
-                         onclick="openLightbox('中餐烹調丙級技術士證照', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/portfolio01.pdf', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/cook_cert.jpg')">
+                         onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/portfolio01.pdf', '_blank')">
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/cook_cert.jpg" 
                              alt="中餐烹飪丙級技術士" 
                              class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '中餐丙級')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
-                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                點擊放大檢視
+                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                </svg>
+                                線上查看 PDF
                             </span>
                         </div>
                         <span class="absolute top-2 left-2 text-[10px] tracking-wider font-bold uppercase bg-amber-700 text-white px-2 py-0.5 rounded-md">
@@ -173,15 +210,17 @@
                 <!-- 證照 3 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
                     <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
-                         onclick="openLightbox('安全衛生實習證書', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/portfolio01.pdf', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/safety_cert.jpg')">
+                         onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/portfolio01.pdf', '_blank')">
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/safety_cert.jpg" 
                              alt="安全衛生實習證書" 
                              class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '安全衛生')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
-                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                點擊放大檢視
+                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                </svg>
+                                線上查看 PDF
                             </span>
                         </div>
                         <span class="absolute top-2 left-2 text-[10px] tracking-wider font-bold uppercase bg-stone-600 text-white px-2 py-0.5 rounded-md">
@@ -203,15 +242,17 @@
                 <!-- 證照 4 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
                     <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
-                         onclick="openLightbox('Word Excel PowerPoint 專業證書', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/portfolio01.pdf', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/office_cert.jpg')">
+                         onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/portfolio01.pdf', '_blank')">
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/office_cert.jpg" 
                              alt="word Excel PowerPoint 證書" 
                              class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, 'MS Office')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
-                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                點擊放大檢視
+                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                </svg>
+                                線上查看 PDF
                             </span>
                         </div>
                         <span class="absolute top-2 left-2 text-[10px] tracking-wider font-bold uppercase bg-blue-800 text-white px-2 py-0.5 rounded-md">
@@ -233,15 +274,17 @@
                 <!-- 證照 5 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
                     <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
-                         onclick="openLightbox('多元化餐飲烘焙訓練 380H 結業證書', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/portfolio01.pdf', 'https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/baking_cert.jpg')">
+                         onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/portfolio01.pdf', '_blank')">
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/baking_cert.jpg" 
                              alt="多元化餐飲烘焙訓練 380H" 
                              class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '烘焙380H')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
-                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-                                點擊放大檢視
+                            <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                </svg>
+                                線上查看 PDF
                             </span>
                         </div>
                         <span class="absolute top-2 left-2 text-[10px] tracking-wider font-bold uppercase bg-purple-800 text-white px-2 py-0.5 rounded-md">
@@ -287,7 +330,7 @@
                     </div>
                     <h3 class="font-bold text-stone-900 mb-2">AI 與數位辦公轉型</h3>
                     <p class="text-stone-600 text-sm leading-relaxed">
-                        善用生成式 AI 工具協作、導入自動化管理模組，落實高效率的數位辦公流程。
+                        善用生成式 AI 工具協作、導入自動化 management 模組，落實高效率的數位辦公流程。
                     </p>
                 </div>
 
@@ -304,230 +347,6 @@
             </div>
         </section>
 
-        <!-- 實務經驗與成果 -->
-        <section class="mb-16">
-            <h2 class="text-xl font-bold text-stone-800 mb-6 flex items-center gap-2 border-l-4 border-amber-700 pl-3">
-                實務經驗與具體貢獻 <span class="text-xs text-stone-400 font-normal uppercase tracking-wider">Experience</span>
-            </h2>
-            <div class="space-y-6">
-                <!-- 經歷 1 -->
-                <div class="group bg-white p-6 md:p-8 rounded-2xl border border-stone-200 hover:border-stone-400 shadow-sm hover:shadow-md smooth-transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                        <h3 class="font-bold text-lg text-stone-900 group-hover:text-amber-800 smooth-transition">
-                            食品衛生安全稽核與行政管理
-                        </h3>
-                        <span class="inline-block bg-emerald-50 text-emerald-800 text-xs px-2.5 py-1 rounded-full border border-emerald-100 self-start font-medium">食安專案</span>
-                    </div>
-                    <p class="text-stone-600 text-sm md:text-base leading-relaxed">
-                        深耕餐飲安全管理，負責導入並執行 HACCP 食品安全管制流程、落實出餐高標控管。建立完善且可視化的衛生 SOP 工作流程手冊，有效將廚房與外場稽核時程數位化，提升稽核速度達 30%。
-                    </p>
-                </div>
-
-                <!-- 經歷 2 -->
-                <div class="group bg-white p-6 md:p-8 rounded-2xl border border-stone-200 hover:border-stone-400 shadow-sm hover:shadow-md smooth-transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                        <h3 class="font-bold text-lg text-stone-900 group-hover:text-amber-800 smooth-transition">
-                            製程數據監控與機台自動化維護
-                        </h3>
-                        <span class="inline-block bg-blue-50 text-blue-800 text-xs px-2.5 py-1 rounded-full border border-blue-100 self-start font-medium">數據管理</span>
-                    </div>
-                    <p class="text-stone-600 text-sm md:text-base leading-relaxed">
-                        於電子製造業期間，專責 SPC（統計製程管制）數據分析。針對機台異常訊號，能進行即時錯誤定位與維護排查，防止批量不良品流出。該專案經驗奠定了對「標準化流程、數據監測與異常排除」的高度敏感度。
-                    </p>
-                </div>
-
-                <!-- 經歷 3 -->
-                <div class="group bg-white p-6 md:p-8 rounded-2xl border border-stone-200 hover:border-stone-400 shadow-sm hover:shadow-md smooth-transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                        <h3 class="font-bold text-lg text-stone-900 group-hover:text-amber-800 smooth-transition">
-                            AI 智能科技應用與行政作業重塑
-                        </h3>
-                        <span class="inline-block bg-purple-50 text-purple-800 text-xs px-2.5 py-1 rounded-full border border-purple-100 self-start font-medium">數位轉型</span>
-                    </div>
-                    <p class="text-stone-600 text-sm md:text-base leading-relaxed">
-                        完成健行科大數位辦公與 AI 創新科技應用實務培訓（達 400 小時），熟練掌握生成式 AI 輔助文書處理、報告撰寫及日常行政優化，成功將科技思維融入傳統的餐飲與稽核行政流程中。
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 聯絡方式 -->
-        <footer id="contact" class="border-t border-stone-200 pt-12 mt-16 text-center">
-            <h2 class="text-xl font-bold text-stone-800 mb-2">聯絡資訊</h2>
-            <p class="text-xs tracking-wider text-stone-400 uppercase mb-8">Get In Touch</p>
-            
-            <div class="max-w-md mx-auto bg-stone-50 rounded-2xl p-6 border border-stone-200/60 shadow-inner flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-stone-200 pb-3">
-                    <span class="text-stone-500 text-sm flex items-center gap-2">
-                        <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                        聯絡手機
-                    </span>
-                    <a href="tel:0955515005" class="text-stone-900 font-semibold hover:text-amber-800 smooth-transition">0955-515-005</a>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <span class="text-stone-500 text-sm flex items-center gap-2">
-                        <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        電子信箱
-                    </span>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=s7887632@gmail.com" 
-                       target="_blank" 
-                       class="text-stone-900 font-semibold hover:text-amber-800 underline smooth-transition">
-                        s7887632@gmail.com
-                    </a>
-                </div>
-            </div>
-            
-            <p class="mt-8 text-xs italic text-stone-400">
-                「竭誠歡迎聯繫，期待將我的跨領域管理專長，化為貴組織的成長動能。」
-            </p>
-        </footer>
-
     </div>
-
-    <!-- 全球頂級證照放大燈箱 (Lightbox Modal) -->
-    <div id="lightbox" 
-         class="fixed inset-0 z-50 hidden bg-stone-950/90 backdrop-blur-md flex items-center justify-center p-4 smooth-transition opacity-0 pointer-events-none"
-         onclick="closeLightbox()">
-        
-        <!-- 燈箱卡片容器 -->
-        <div class="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden smooth-transition scale-90"
-             onclick="event.stopPropagation()">
-            
-            <!-- 燈箱頂部欄 -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50">
-                <h4 id="lightbox-title" class="font-bold text-stone-800 text-base md:text-lg">證照預覽</h4>
-                <div class="flex items-center gap-3">
-                    <a id="lightbox-pdf-link" href="#" target="_blank" 
-                       class="text-xs bg-stone-200 hover:bg-stone-300 text-stone-700 px-3 py-1.5 rounded-lg smooth-transition font-medium">
-                        查看PDF檔案
-                    </a>
-                    <button onclick="closeLightbox()" 
-                            class="text-stone-400 hover:text-stone-900 smooth-transition p-1 rounded-full hover:bg-stone-200/50">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- 圖片展示區域 (防爆版面，限制高度) -->
-            <div class="p-4 bg-stone-100 flex items-center justify-center overflow-auto max-h-[75vh]">
-                <!-- 如果圖片載入失敗，會由 js 自動替換成大張 SVG 或是文字說明 -->
-                <img id="lightbox-img" 
-                     src="" 
-                     alt="證照放大圖" 
-                     class="max-w-full max-h-[70vh] rounded-lg object-contain shadow-md"
-                     onerror="this.style.display='none'; document.getElementById('lightbox-fallback').style.display='flex'">
-                     
-                <!-- 燈箱內專用大圖 Fallback SVG (當照片尚未準備好時顯示) -->
-                <div id="lightbox-fallback" class="hidden flex-col items-center justify-center py-16 px-8 text-center bg-white rounded-xl border border-stone-200 max-w-lg shadow-sm">
-                    <div class="w-20 h-20 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 mb-4 animate-pulse">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                    <h5 id="fallback-cert-name" class="text-lg font-bold text-stone-800 mb-2">證照名稱</h5>
-                    <p class="text-sm text-stone-500 max-w-xs mb-4">
-                        目前提供 PDF 證明文件檔案供您參閱。您可以點選下方按鈕直接線上瀏覽。
-                    </p>
-                    <a id="lightbox-fallback-btn" href="#" target="_blank" class="bg-amber-800 hover:bg-amber-900 text-white px-5 py-2 rounded-xl text-sm font-medium smooth-transition">
-                        開啟 PDF 官方證明
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        /**
-         * 處理證照圖片加載失敗時的防破圖替換技術
-         * @param {HTMLImageElement} imgElement - 觸發錯誤的圖片物件
-         * @param {string} certShortName - 證照名稱縮寫
-         */
-        function handleImageError(imgElement, certShortName) {
-            // 隱藏原始 img 標籤以避免顯示瀏覽器的「破圖圖示」
-            imgElement.style.display = 'none';
-            
-            // 建立一個高質感的虛擬證照預覽卡片 (SVG 邊框 + 徽章 + 精美文字)
-            const fallbackDiv = document.createElement('div');
-            fallbackDiv.className = 'absolute inset-0 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-stone-50 to-stone-100 text-stone-700 text-center select-none';
-            fallbackDiv.innerHTML = `
-                <div class="w-full h-full border-4 border-double border-stone-300 rounded-lg flex flex-col items-center justify-center p-3">
-                    <!-- 優雅的證書勳章圖示 -->
-                    <svg class="w-12 h-12 text-amber-700/80 mb-2" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 009 11M9 11V9m0 10a12.006 12.006 0 003.582-7.89H12m0 0V9m0 0a9 9 0 10-9 9m9-9a9 9 0 009 9"/>
-                    </svg>
-                    <span class="text-[10px] uppercase tracking-widest text-stone-400 font-bold mb-1">Professional Certification</span>
-                    <span class="font-bold text-xs text-stone-800 px-2 py-1 bg-stone-200/50 rounded-md border border-stone-200 max-w-[90%] truncate">
-                        ${certShortName}
-                    </span>
-                    <span class="text-[10px] text-amber-800 mt-2 flex items-center gap-1 font-medium">
-                        🔎 點擊看 PDF 證明
-                    </span>
-                </div>
-            `;
-            
-            // 將建構好的虛擬證照置入父層容器中
-            imgElement.parentNode.appendChild(fallbackDiv);
-        }
-
-        /**
-         * 開啟燈箱放大預覽
-         * @param {string} title - 證照標題
-         * @param {string} pdfUrl - PDF檔案連結
-         * @param {string} imgUrl - 證照圖片連結
-         */
-        function openLightbox(title, pdfUrl, imgUrl) {
-            const lightbox = document.getElementById('lightbox');
-            const lightboxTitle = document.getElementById('lightbox-title');
-            const lightboxPdfLink = document.getElementById('lightbox-pdf-link');
-            const lightboxImg = document.getElementById('lightbox-img');
-            const lightboxFallback = document.getElementById('lightbox-fallback');
-            const fallbackCertName = document.getElementById('fallback-cert-name');
-            const lightboxFallbackBtn = document.getElementById('lightbox-fallback-btn');
-            
-            // 寫入標題與 PDF 連接
-            lightboxTitle.innerText = title;
-            lightboxPdfLink.href = pdfUrl;
-            lightboxFallbackBtn.href = pdfUrl;
-            fallbackCertName.innerText = title;
-            
-            // 初始化顯示狀態
-            lightboxImg.style.display = 'block';
-            lightboxFallback.style.display = 'none';
-            lightboxImg.src = imgUrl; // 觸發圖片加載，若失敗會自動觸發 img 上的 onerror
-            
-            // 啟動淡入動畫與展示
-            lightbox.classList.remove('hidden');
-            setTimeout(() => {
-                lightbox.classList.remove('opacity-0', 'pointer-events-none');
-                lightbox.querySelector('.relative').classList.remove('scale-90');
-                lightbox.querySelector('.relative').classList.add('scale-100');
-            }, 50);
-        }
-
-        /**
-         * 關閉燈箱
-         */
-        function closeLightbox() {
-            const lightbox = document.getElementById('lightbox');
-            lightbox.classList.add('opacity-0', 'pointer-events-none');
-            lightbox.querySelector('.relative').classList.remove('scale-100');
-            lightbox.querySelector('.relative').classList.add('scale-90');
-            
-            // 動畫結束後徹底隱藏
-            setTimeout(() => {
-                lightbox.classList.add('hidden');
-            }, 400);
-        }
-
-        // 綁定鍵盤 Esc 鍵來關閉證照燈箱，增強使用者體驗
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeLightbox();
-            }
-        });
-    </script>
 </body>
 </html>
