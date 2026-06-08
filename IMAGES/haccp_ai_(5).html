@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐盒製備與販售 HACCP 數位流程看板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .ccp-pulse {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+        /* Chat bubble typing animation */
+        .typing-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #6ee7b7;
+            animation: blink 1.2s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Risk score badge */
+        .risk-badge-low    { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .risk-badge-medium { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+        .risk-badge-high   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* AI message fade-in */
+        .ai-msg-enter { animation: fadeSlideIn 0.35s ease forwards; }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
+
+<!-- ===== HEADER ===== -->
+<header class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white shadow-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-white p-2 rounded-lg text-emerald-800 shadow">
+                <i data-lucide="clipboard-check" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wider">餐盒製備與販售管理系統</h1>
+                <p class="text-xs text-emerald-100 font-medium">標準作業程序 (SOP) 暨 HACCP 數位管制看板　<span class="text-emerald-300">— AI 食安顧問 Powered by Gemini</span></p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 bg-emerald-900/40 px-3 py-1.5 rounded-full border border-emerald-500/30">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                <span class="text-xs font-semibold tracking-wide">★ CCP 關鍵管制點啟動中</span>
+            </div>
+            <button onclick="toggleSettingsModal()" class="bg-emerald-900/60 hover:bg-emerald-900 border border-emerald-500/50 p-2 rounded-full transition-colors duration-200 group cursor-pointer" title="API Key 詳細設定">
+                <i data-lucide="settings" class="w-5 h-5 text-emerald-100 group-hover:rotate-90 transition-transform duration-300"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+
+    <!-- ===== TOP KPI TILES ===== -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-500 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400 font-bold uppercase">目標便當總重</p>
+                <p class="text-2xl font-black text-slate-700">500 <span class="text-sm font-normal">公克 (±5%)</span></p>
+            </div>
+            <div class="bg-amber-50 p-3 rounded-lg text-amber-600"><i data-lucide="scale" class="w-6 h-6"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-rose-500 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400 font-bold uppercase">★ CCP1 烹調溫度</p>
+                <p class="text-2xl font-black text-slate-700">≥ 75 <span class="text-sm font-normal">°C</span></p>
+            </div>
+            <div class="bg-rose-50 p-3 rounded-lg text-rose-600"><i data-lucide="thermometer" class="w-6 h-6"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-orange-500 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400 font-bold uppercase">★ CCP2 熱存溫度</p>
+                <p class="text-2xl font-black text-slate-700">≥ 60 <span class="text-sm font-normal">°C</span></p>
+            </div>
+            <div class="bg-orange-50 p-3 rounded-lg text-orange-600"><i data-lucide="flame" class="w-6 h-6"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-emerald-500 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400 font-bold uppercase">衛生分區管制</p>
+                <p class="text-2xl font-black text-slate-700">4 <span class="text-sm font-normal">大核心區域</span></p>
+            </div>
+            <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 1: FLOW TABS ===== -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="git-fork" class="text-emerald-700 w-5 h-5"></i>
+                <h2 class="text-lg font-bold text-slate-800">第一部分：HACCP 四大核心製備流程圖</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊下方步驟卡片可切換與檢視各區管制細節</span>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <button onclick="switchTab('tab-storage','btn-storage')" id="btn-storage" class="flow-tab-btn text-left bg-white p-5 rounded-xl border-2 border-emerald-600 shadow-md hover:shadow-lg transition duration-200 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-emerald-600 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">區域 1</div>
+                <div class="flex items-center gap-3 mb-3 text-emerald-700"><i data-lucide="package" class="w-6 h-6"></i><h3 class="font-bold text-base">驗收與貯存區</h3></div>
+                <p class="text-xs text-slate-500 mb-3 line-clamp-2">掌控乾料庫、包材室、-18°C冷凍庫及7°C冷藏庫溫度與分類。</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">冷藏 7°C</span>
+                    <span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md font-medium">冷凍 -18°C</span>
+                </div>
+            </button>
+            <button onclick="switchTab('tab-prep','btn-prep')" id="btn-prep" class="flow-tab-btn text-left bg-white p-5 rounded-xl border-2 border-transparent shadow hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs px-3 py-1 rounded-bl-lg font-bold">區域 2</div>
+                <div class="flex items-center gap-3 mb-3 text-slate-700 hover:text-emerald-700 transition"><i data-lucide="chef-hat" class="w-6 h-6"></i><h3 class="font-bold text-base">前處理區 (生食)</h3></div>
+                <p class="text-xs text-slate-500 mb-3 line-clamp-2">飯線、滷線與炒線生食分流清洗、去皮與川燙截切。</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">防交叉污染</span>
+                    <span class="text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-medium">川燙去雜質</span>
+                </div>
+            </button>
+            <button onclick="switchTab('tab-cooking','btn-cooking')" id="btn-cooking" class="flow-tab-btn text-left bg-white p-5 rounded-xl border-2 border-transparent shadow hover:shadow-md transition duration-200 relative overflow-hidden ccp-pulse">
+                <div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-3 py-1 rounded-bl-lg font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>★ CCP1</div>
+                <div class="flex items-center gap-3 mb-3 text-red-600"><i data-lucide="flame" class="w-6 h-6 text-red-500"></i><h3 class="font-bold text-base text-red-600">加熱烹調區 (熟食)</h3></div>
+                <p class="text-xs text-slate-500 mb-3 line-clamp-2">蒸煮、大火翻炒、滷汁滾沸。嚴格把關熟食中心溫度 ≥ 75°C。</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold">中心溫度 ≥ 75°C</span>
+                </div>
+            </button>
+            <button onclick="switchTab('tab-pack','btn-pack')" id="btn-pack" class="flow-tab-btn text-left bg-white p-5 rounded-xl border-2 border-transparent shadow hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-orange-500 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">★ CCP2</div>
+                <div class="flex items-center gap-3 mb-3 text-slate-700 hover:text-orange-600 transition"><i data-lucide="container" class="w-6 h-6"></i><h3 class="font-bold text-base">配膳包裝區 (潔淨)</h3></div>
+                <p class="text-xs text-slate-500 mb-3 line-clamp-2">500g 精準稱重配膳、密封加蓋、熱存與裝載車出貨。</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <span class="text-[10px] bg-orange-50 text-orange-600 px-2 py-0.5 rounded-md font-medium">總重 500g</span>
+                    <span class="text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-medium">熱存 ≥ 60°C</span>
+                </div>
+            </button>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 mt-6">
+            <div id="tab-storage" class="flow-tab-content block">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-emerald-100 text-emerald-800 text-sm font-bold px-3 py-1 rounded-md">區域 1</span>
+                        <h3 class="text-lg font-bold text-slate-800">物料進貨驗收與分類貯存管理規範</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">確保所有進貨食材符合安全標準。乾料庫需保持通風乾燥，避免陽光直射；-18°C冷凍庫應落實先進先出並定時除霜；7°C冷藏庫需將熟食放置上層、生食下層，防止交叉污染，並每日記錄早中晚庫溫。</p>
+            </div>
+            <div id="tab-prep" class="flow-tab-content hidden">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-slate-200 text-slate-700 text-sm font-bold px-3 py-1 rounded-md">區域 2</span>
+                        <h3 class="text-lg font-bold text-slate-800">前處理區 (生食) 作業規範</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">此區域為高污染風險區。作業人員需穿戴專用圍裙與雨鞋，刀具砧板需依食材類別（肉類、海鮮、蔬果）標色區分。根莖類蔬果需澈底清洗去泥，肉類需退冰並做基礎川燙以去除血水與雜質。</p>
+            </div>
+            <div id="tab-cooking" class="flow-tab-content hidden">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-red-100 text-red-800 text-sm font-bold px-3 py-1 rounded-md">區域 3</span>
+                        <h3 class="text-lg font-bold text-red-700">加熱烹調區 ★ CCP1 規範</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">此為消滅病原菌之關鍵防線。規定所有肉品、海鮮等高風險食材，其烹調中心溫度必須達到 <strong class="text-red-600">75°C 以上且維持至少一分鐘</strong>。作業員需定時使用已校正之探針式溫度計進行實測並記錄於 HACCP 表單。</p>
+            </div>
+            <div id="tab-pack" class="flow-tab-content hidden">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-orange-100 text-orange-800 text-sm font-bold px-3 py-1 rounded-md">區域 4</span>
+                        <h3 class="text-lg font-bold text-orange-700">配膳包裝區 ★ CCP2 規範</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">此為最高潔淨區，進入前需進行二次手部消毒。為抑制微生物生長，熱食於配膳完成後，必須存放於保溫設備中，確保運送前至食用期間，溫度維持在 <strong class="text-orange-600">60°C 以上</strong>。每個餐盒需落實抽樣稱重，維持標準 500g 規範。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 2: WEIGHT SIMULATOR ===== -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="hand-metal" class="text-emerald-700 w-5 h-5"></i>
+                    <h2 class="text-lg font-bold text-slate-800">第二部分：500g 便當動態稱重模擬器 (配膳室專用)</h2>
+                </div>
+                <p class="text-xs text-slate-400 mb-6">在廚房現場，配膳員需精準調配每道菜品的份量，確保便當達到標準500公克（容許區間 475g - 525g）。請試著調配下方滑桿，以達到合格綠色安全燈。</p>
+                <div class="space-y-5">
+                    <div>
+                        <div class="flex justify-between items-center mb-1 text-xs">
+                            <span class="font-bold text-slate-700 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-400 inline-block"></span> 1. 主食：米飯 (推薦: 220g)</span>
+                            <span class="font-bold text-emerald-700" id="weight-rice-val">220 克</span>
+                        </div>
+                        <input id="slider-rice" type="range" min="150" max="300" value="220" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500" oninput="calculateTotal()">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1 text-xs">
+                            <span class="font-bold text-slate-700 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-400 inline-block"></span> 2. 主菜：滾沸滷製品 (推薦: 150g)</span>
+                            <span class="font-bold text-emerald-700" id="weight-braised-val">150 克</span>
+                        </div>
+                        <input id="slider-braised" type="range" min="100" max="220" value="150" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-500" oninput="calculateTotal()">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1 text-xs">
+                            <span class="font-bold text-slate-700 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-400 inline-block"></span> 3. 配菜：大火炒蔬菜 (推薦: 130g)</span>
+                            <span class="font-bold text-emerald-700" id="weight-vegetable-val">130 克</span>
+                        </div>
+                        <input id="slider-vegetable" type="range" min="80" max="180" value="130" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500" oninput="calculateTotal()">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t pt-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                        <div class="text-xs text-slate-400 font-semibold mb-1">餐盒內容總重估計</div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="weight-total-display" class="text-4xl font-black text-emerald-700 transition-colors duration-300">500</span>
+                            <span class="text-slate-500 font-semibold text-sm">公克 (g)</span>
+                        </div>
+                    </div>
+                    <div id="status-card" class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl flex items-center gap-3 transition-colors duration-300">
+                        <div id="status-icon-box" class="bg-emerald-500 text-white p-2 rounded-full shadow-sm flex-shrink-0">
+                            <i data-lucide="check-circle" id="status-icon" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 id="status-title" class="text-sm font-bold text-emerald-900">檢驗結果：符合規範</h4>
+                            <p id="status-desc" class="text-[11px] text-emerald-700">落於標準區間 475g-525g 內，可進行出貨。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="utensils" class="text-emerald-700 w-5 h-5"></i> 標準 500g 蔬菜便當組合
+                </h3>
+                <p class="text-xs text-slate-400 mb-4">根據配備食材，黃金配比與重量示範：</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-amber-50 border-l-4 border-amber-500">
+                        <div><h4 class="text-xs font-bold text-slate-800">東昇米白飯</h4><p class="text-[10px] text-slate-400">浸泡30分鐘蒸煮悶熟，香Q飽滿</p></div>
+                        <span class="text-xs font-bold bg-amber-200/60 text-amber-800 px-2 py-1 rounded" id="box-rice-val">220g</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-rose-50 border-l-4 border-rose-500">
+                        <div><h4 class="text-xs font-bold text-slate-800">滷豆包燉紅白蘿蔔香菇</h4><p class="text-[10px] text-slate-400">八角、香菇素蠔油、糖、鹽、薑片燜燉</p></div>
+                        <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-1 rounded" id="box-braised-val">150g</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-emerald-50 border-l-4 border-emerald-500">
+                        <div><h4 class="text-xs font-bold text-slate-800">爆香炒什錦鮮蔬菜</h4><p class="text-[10px] text-slate-400">花椰菜、木耳、紅黃甜椒、白豆芽大火爆炒</p></div>
+                        <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded" id="box-veg-val">130g</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-400">餐盒包裝與外蓋重約：</span>
+                    <span class="text-xs font-bold text-slate-600">30 公克 (不計入成品重)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 3: CHECKLIST + AI + SHIPPING ===== -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+        <!-- Left 2-col: checklist + AI -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+
+            <!-- Checklist -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="check-square" class="text-emerald-700 w-5 h-5"></i>
+                        <h2 class="text-lg font-bold text-slate-800">第三部分：HACCP 每日自主檢查與安全登錄</h2>
+                    </div>
+                    <button onclick="resetChecklist()" class="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 transition-colors">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 重設今日點檢
+                    </button>
+                </div>
+                <div class="mb-6">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-slate-700">今日點檢進度</span>
+                        <span id="progress-text" class="text-xs font-bold text-emerald-600">0% (0/6 完成)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500 ease-out" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="space-y-2" id="checklist-container">
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer" onclick="toggleCheckbox('check1')">
+                        <input type="checkbox" id="check1" class="checklist-item mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 pointer-events-none">
+                        <div><h4 class="text-sm font-bold text-slate-800">[貯存溫度] 冷凍庫溫度確認 (-18°C 以下)</h4><p class="text-xs text-slate-500 mt-1">確認庫內乾淨，區分生熟食擺放且無滴水現象。</p></div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer" onclick="toggleCheckbox('check2')">
+                        <input type="checkbox" id="check2" class="checklist-item mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 pointer-events-none">
+                        <div><h4 class="text-sm font-bold text-slate-800">[貯存溫度] 冷藏庫溫度確認 (7°C 以下)</h4><p class="text-xs text-slate-500 mt-1">確認蔬果、肉品分層存放，無異味。</p></div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer" onclick="toggleCheckbox('check3')">
+                        <input type="checkbox" id="check3" class="checklist-item mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 pointer-events-none">
+                        <div><h4 class="text-sm font-bold text-slate-800">[防止交叉污染] 生熟食器具與人員動線完全分流</h4><p class="text-xs text-slate-500 mt-1">生食區人員未跨區進入熟食與配膳區。</p></div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer" onclick="toggleCheckbox('check4')">
+                        <input type="checkbox" id="check4" class="checklist-item mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 pointer-events-none">
+                        <div><h4 class="text-sm font-bold text-slate-800">[個人衛生與防護] 配膳人員二次手部消毒與防護帽穿戴</h4><p class="text-xs text-slate-500 mt-1">確實使用 75% 酒精消毒，頭髮未露出防護帽外。</p></div>
+                    </div>
+                    <!-- CCP1 -->
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-100">
+                        <div class="mt-1 flex-shrink-0"><i data-lucide="thermometer" class="w-4 h-4 text-rose-500"></i></div>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1"><span class="text-rose-600">★ CCP1</span> 烹調中心溫度紀錄 (≥ 75°C)</h4>
+                            <div class="mt-2 flex items-center gap-2">
+                                <span class="text-xs text-slate-500">實測：</span>
+                                <input type="number" id="ccp1-val" placeholder="例如: 78" class="w-20 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-rose-500" oninput="checkProgress()">
+                                <span class="text-xs text-slate-500">°C</span>
+                                <span id="ccp1-status" class="ml-2 text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200 flex items-center gap-1"><i data-lucide="minus" class="w-3 h-3"></i> 待確認</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- CCP2 -->
+                    <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg border border-transparent hover:border-slate-100">
+                        <div class="mt-1 flex-shrink-0"><i data-lucide="flame" class="w-4 h-4 text-orange-500"></i></div>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1"><span class="text-orange-600">★ CCP2</span> 熱存/配送溫度確認 (≥ 60°C)</h4>
+                            <div class="mt-2 flex items-center gap-2">
+                                <span class="text-xs text-slate-500">實測：</span>
+                                <input type="number" id="ccp2-val" placeholder="例如: 65" class="w-20 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-orange-500" oninput="checkProgress()">
+                                <span class="text-xs text-slate-500">°C</span>
+                                <span id="ccp2-status" class="ml-2 text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200 flex items-center gap-1"><i data-lucide="minus" class="w-3 h-3"></i> 待確認</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== AI AUDITOR BLOCK (Claude) ===== -->
+            <div class="bg-[#0f4d38] rounded-2xl shadow-lg border border-[#16634a] p-6 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                <div class="flex flex-col lg:flex-row gap-6 relative z-10">
+
+                    <!-- Left: info + API key -->
+                    <div class="w-full lg:w-5/12 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-emerald-300"></i>
+                                <span class="text-[10px] text-emerald-300 font-medium tracking-wider">Powered by Gemini 1.5 Flash</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">AI 智慧食安稽核顧問</h3>
+                            <p class="text-[11px] text-emerald-100/70 mb-5 leading-relaxed">
+                                輸入 Gemini API Key 後，可直接詢問食安法規、分析當日 CCP 紀錄，或請 AI 自動匯入今日表單並給出風險評分。
+                            </p>
+                        </div>
+
+                        <!-- API Key input -->
+                        <div class="bg-[#0b3829] rounded-xl p-4 border border-[#135740] mb-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="text-xs font-bold text-emerald-100 flex items-center gap-1.5">
+                                    <i data-lucide="key" class="w-3.5 h-3.5"></i> 設定 Claude API Key
+                                </label>
+                                <button onclick="toggleSettingsModal()" class="text-[10px] bg-[#1b7352] hover:bg-emerald-600 text-white px-2 py-1 rounded transition-colors border border-emerald-500/30">詳細設定</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="relative flex-1">
+                                    <input type="password" id="quick-api-key" placeholder="AIzaSy..." class="w-full bg-[#082a1f] border border-[#104a37] rounded py-1.5 pl-3 pr-8 text-xs text-emerald-100 focus:outline-none focus:border-emerald-500 placeholder-[#1b7352]">
+                                    <i data-lucide="eye-off" onclick="togglePasswordVisibility('quick-api-key')" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#208a62] cursor-pointer hover:text-emerald-400 transition-colors"></i>
+                                </div>
+                                <button onclick="saveApiKey('quick')" class="bg-[#1b7352] hover:bg-emerald-600 text-white text-xs px-3 rounded transition-colors font-medium">儲存</button>
+                            </div>
+                            <div class="mt-3 flex items-start gap-1.5">
+                                <input type="checkbox" id="save-local-quick" class="w-3 h-3 mt-0.5 rounded border-[#1b7352] bg-[#082a1f] text-emerald-500 accent-emerald-500 cursor-pointer">
+                                <label for="save-local-quick" class="text-[10px] text-emerald-200/70 cursor-pointer leading-tight">同意本網頁將金鑰暫存於瀏覽器 sessionStorage（關閉頁面自動清除）。</label>
+                            </div>
+                        </div>
+
+                        <!-- Quick action: auto-fill today's data -->
+                        <button onclick="auditTodayData()" id="btn-auto-audit"
+                            class="w-full text-xs py-2.5 rounded-lg font-bold bg-emerald-700/60 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-100 flex items-center justify-center gap-2 transition-colors mb-4">
+                            <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> 自動匯入今日紀錄並進行 AI 稽核
+                        </button>
+
+                        <!-- Prompt suggestions -->
+                        <div>
+                            <p class="text-[11px] font-bold text-emerald-200 mb-2">你可以這樣問：</p>
+                            <ul class="text-[11px] text-emerald-100/60 space-y-1.5 pl-4 list-disc marker:text-emerald-500">
+                                <li>仙人掌桿菌在什麼溫度下最容易繁殖？</li>
+                                <li>請分析今日 CCP 紀錄是否符合台灣 GHP 規範？</li>
+                                <li>冷藏庫今天量到 9°C，有什麼風險？</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Right: locked state (before API key) -->
+                    <div id="ai-lock-screen" class="w-full lg:w-7/12 bg-[#093023] rounded-xl border border-[#104a37] flex items-center justify-center p-6 text-center">
+                        <div class="flex flex-col items-center max-w-xs">
+                            <div class="bg-yellow-500/10 p-4 rounded-full mb-4">
+                                <i data-lucide="shield-alert" class="w-8 h-8 text-yellow-500"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-yellow-500 mb-2">金鑰未配置：AI 稽核功能已鎖定</h4>
+                            <p class="text-[11px] text-emerald-200/60 leading-relaxed">輸入您的 Claude API Key 以解鎖進階 AI 食安稽核顧問。金鑰僅存在瀏覽器 sessionStorage，不會上傳到任何伺服器。</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: unlocked chat (after API key) -->
+                    <div id="ai-unlocked-screen" class="hidden w-full lg:w-7/12 bg-[#093023] rounded-xl border border-[#104a37] flex flex-col p-4 shadow-inner">
+                        <div class="flex items-center justify-between mb-3 border-b border-[#135740] pb-2">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="bot" class="w-4 h-4 text-emerald-400"></i>
+                                <h4 class="font-bold text-emerald-100 text-sm">HACCP 稽核助手</h4>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <!-- Risk score badge (hidden until AI responds) -->
+                                <span id="risk-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+                                <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>已連線
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Chat area -->
+                        <div id="ai-chat-area" class="flex-1 bg-[#06241a] rounded-lg border border-[#104a37] mb-3 p-3 overflow-y-auto h-48 custom-scrollbar flex flex-col gap-3">
+                            <div class="flex gap-2 ai-msg-enter">
+                                <div class="w-6 h-6 rounded-full bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-700">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-emerald-400"></i>
+                                </div>
+                                <div class="bg-[#0b3829] p-2.5 rounded-lg rounded-tl-none border border-[#135740] text-xs leading-relaxed">
+                                    您好！金鑰認證成功，我是您的 HACCP 食安稽核顧問。您可以詢問食安法規、溫控標準、交叉污染預防，或點擊「自動匯入今日紀錄」讓我分析當日合規狀態。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input row -->
+                        <div class="flex gap-2">
+                            <input type="text" id="ai-user-input" placeholder="詢問食安法規或稽核問題..."
+                                class="flex-1 bg-[#082a1f] border border-[#104a37] rounded-lg py-2 px-3 text-xs text-emerald-100 focus:outline-none focus:border-emerald-500 placeholder-[#208a62]"
+                                onkeydown="if(event.key==='Enter') sendAiMessage()">
+                            <button onclick="sendAiMessage()" id="ai-send-btn"
+                                class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg transition-colors shadow-sm flex items-center justify-center">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Shipping release -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col min-h-[400px]">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-4 mb-4">
+                <i data-lucide="activity" class="text-emerald-700 w-5 h-5"></i>
+                <h3 class="font-bold text-slate-800 text-sm">即時通報與出貨放行</h3>
+            </div>
+            <p class="text-xs text-slate-500 mb-6 leading-relaxed">當日出貨稽核條件：需 CCP1 與 CCP2 數值完全符合規範，且所有衛生管理項目皆勾選完成。</p>
+            <div id="shipping-block" class="flex-1 flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-slate-100 p-6 text-center mb-6">
+                <div class="bg-amber-100 p-4 rounded-full mb-4 text-amber-500"><i data-lucide="lock" class="w-8 h-8"></i></div>
+                <h4 class="text-sm font-bold text-slate-800 mb-2">鎖定：未達出貨標準</h4>
+                <p class="text-[11px] text-slate-500">請先完成今日所有自主稽核項目並確認數值達標<br>(CCP1 ≥ 75°C, CCP2 ≥ 60°C)</p>
+            </div>
+            <button id="shipping-btn" disabled class="w-full py-3 rounded-xl font-bold text-sm bg-slate-200 text-slate-400 cursor-not-allowed flex justify-center items-center gap-2 transition-all duration-300">
+                <i data-lucide="file-check" class="w-4 h-4"></i> 產生當日出貨 HACCP 合格單
+            </button>
+        </div>
+    </section>
+</main>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div id="settings-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="settings-modal-content">
+        <div class="flex items-center justify-between border-b border-slate-100 p-5">
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="settings" class="w-5 h-5 text-emerald-600"></i> 系統進階設定
+            </h3>
+            <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="p-6 space-y-5">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                    <i data-lucide="key" class="w-4 h-4 text-slate-400"></i> Gemini API Key 設定
+                </label>
+                <p class="text-[11px] text-slate-500 mb-3">輸入 Gemini API Key 以啟用「AI 智慧食安顧問」功能。金鑰僅保存在您目前的瀏覽器 sessionStorage 中。</p>
+                <div class="relative">
+                    <input type="password" id="modal-api-key" placeholder="貼上您的 API Key (AIzaSy...)" class="w-full border border-slate-300 rounded-lg py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:border-emerald-500 font-mono">
+                    <i data-lucide="eye-off" onclick="togglePasswordVisibility('modal-api-key')" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-600"></i>
+                </div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-3">
+                <i data-lucide="info" class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"></i>
+                <p class="text-[11px] text-amber-800 leading-relaxed"><strong>隱私提醒：</strong>本網站不會將您的金鑰傳送到任何第三方伺服器。勾選儲存後，金鑰存於 <code>sessionStorage</code>，關閉分頁即自動清除。API 呼叫直接從您的瀏覽器發送至 Anthropic。</p>
+            </div>
+        </div>
+        <div class="border-t border-slate-100 p-5 bg-slate-50 rounded-b-2xl flex justify-between items-center gap-3">
+            <button onclick="clearApiKey()" class="px-4 py-2 text-sm font-bold text-rose-600 hover:bg-rose-50 bg-white border border-rose-200 rounded-lg cursor-pointer flex items-center gap-1.5">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> 清除金鑰
+            </button>
+            <div class="flex gap-3">
+                <button onclick="toggleSettingsModal()" class="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-lg cursor-pointer">取消</button>
+                <button onclick="saveApiKey('modal')" class="px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm cursor-pointer flex items-center gap-1.5">
+                    <i data-lucide="save" class="w-4 h-4"></i> 儲存並套用
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ─────────────────────────────────────────
+//  SYSTEM PROMPT for Gemini HACCP Auditor
+// ─────────────────────────────────────────
+const HACCP_SYSTEM_PROMPT = `你是一位嚴格且專業的 HACCP 食品安全稽核顧問，專精於台灣衛生福利部食品藥物管理署（TFDA）的食品良好衛生規範準則（GHP）及 HACCP 系統管理規範。
+
+你的職責：
+1. 依據台灣 GHP 法規標準（衛福部公告）分析食安紀錄
+2. 識別潛在的危害分析關鍵控制點（HACCP）偏差
+3. 評估交叉污染、溫控失效、個人衛生等風險
+4. 提供具體、可執行的改善建議
+
+回應規範：
+- 使用繁體中文回答
+- 語氣專業嚴謹，但易於理解
+- 若有溫度數值，必須對照台灣法規標準判斷合規性：
+  * CCP1 烹調中心溫度：≥ 75°C（含維持 ≥ 1 分鐘）
+  * CCP2 熱存溫度：≥ 60°C
+  * 冷藏溫度：≤ 7°C
+  * 冷凍溫度：≤ -18°C
+- 若使用者請求「風險評分」，請以以下格式回應：
+  **食安風險評分：X / 10**（1=極低風險，10=極高風險）
+  並提供評分理由與分項說明。
+- 若偵測到高風險情況（評分 ≥ 7），務必以醒目方式標示並建議立即停產或通報。
+- 回答長度適中，條列式重點優先。
+- 不得提供與食品安全無關的建議。`;
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+let chatHistory = [];   // { role, content }[]
+let isAiLoading = false;
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    calculateTotal();
+    checkProgress();
+    const savedKey = sessionStorage.getItem('gemini_api_key');
+    if (savedKey) {
+        document.getElementById('quick-api-key').value = savedKey;
+        document.getElementById('modal-api-key').value = savedKey;
+        updateAiLockState(true);
+    }
+});
+
+// ─────────────────────────────────────────
+//  SETTINGS MODAL
+// ─────────────────────────────────────────
+function toggleSettingsModal() {
+    const modal = document.getElementById('settings-modal');
+    const content = document.getElementById('settings-modal-content');
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        document.getElementById('modal-api-key').value = document.getElementById('quick-api-key').value;
+        setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+    } else {
+        modal.classList.add('opacity-0'); content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+}
+
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling;
+    if (input.type === 'password') {
+        input.type = 'text'; icon.setAttribute('data-lucide', 'eye');
+    } else {
+        input.type = 'password'; icon.setAttribute('data-lucide', 'eye-off');
+    }
+    lucide.createIcons();
+}
+
+function saveApiKey(source) {
+    const isModal = source === 'modal';
+    let key = document.getElementById(isModal ? 'modal-api-key' : 'quick-api-key').value.trim();
+    if (!key) { showToast('請輸入有效的 API Key', 'error'); return; }
+
+    // Sync both fields
+    document.getElementById('quick-api-key').value = key;
+    document.getElementById('modal-api-key').value = key;
+    sessionStorage.setItem('gemini_api_key', key);
+    updateAiLockState(true);
+    showToast('API Key 儲存成功！AI 顧問已解鎖。', 'success');
+    if (isModal) toggleSettingsModal();
+}
+
+function updateAiLockState(unlocked) {
+    document.getElementById('ai-lock-screen').classList.toggle('hidden', unlocked);
+    document.getElementById('ai-unlocked-screen').classList.toggle('hidden', !unlocked);
+}
+
+// ─────────────────────────────────────────
+//  GEMINI API  (三步驟：儲存 → 呼叫 → 清除)
+//
+//  步驟 1：saveApiKey()      — 儲存金鑰至 sessionStorage
+//  步驟 2：callGeminiApi()   — 組裝請求並呼叫 API
+//  步驟 3：clearApiKey()     — 清除金鑰並鎖定 AI 區塊
+// ─────────────────────────────────────────
+
+// ── 步驟 2：核心 API 呼叫（內部輔助函式）──
+async function _geminiRequest(contents) {
+    const apiKey = sessionStorage.getItem('gemini_api_key');
+    if (!apiKey) throw new Error('金鑰未設定，請先輸入 Gemini API Key');
+
+    // 使用 x-goog-api-key header（金鑰不外露於 URL）
+    const response = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
+            },
+            body: JSON.stringify({
+                system_instruction: { parts: [{ text: HACCP_SYSTEM_PROMPT }] },
+                contents
+            })
+        }
+    );
+
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+    if (!text) throw new Error('回應內容為空，請稍後再試');
+    return text;
+}
+
+async function callGeminiApi(userMessage) {
+    if (!sessionStorage.getItem('gemini_api_key')) {
+        showToast('請先輸入 Gemini API Key', 'error'); return null;
+    }
+    chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+    const contents = chatHistory.map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: m.parts || [{ text: m.content || '' }]
+    }));
+    const assistantText = await _geminiRequest(contents);
+    chatHistory.push({ role: 'assistant', parts: [{ text: assistantText }] });
+    return assistantText;
+}
+
+// ── 步驟 3：清除金鑰 ──
+function clearApiKey() {
+    sessionStorage.removeItem('gemini_api_key');
+    document.getElementById('quick-api-key').value = '';
+    document.getElementById('modal-api-key').value = '';
+    chatHistory = [];
+    // 重置聊天視窗
+    const area = document.getElementById('ai-chat-area');
+    area.innerHTML = '';
+    document.getElementById('risk-badge').classList.add('hidden');
+    updateAiLockState(false);
+    showToast('金鑰已清除，AI 顧問已鎖定', 'success');
+}
+
+// ─────────────────────────────────────────
+//  CHAT UI
+// ─────────────────────────────────────────
+function appendChatMessage(role, text) {
+    const area = document.getElementById('ai-chat-area');
+
+    if (role === 'user') {
+        const div = document.createElement('div');
+        div.className = 'flex justify-end ai-msg-enter';
+        div.innerHTML = `<div class="bg-emerald-700/60 border border-emerald-600/40 p-2.5 rounded-lg rounded-tr-none text-xs leading-relaxed max-w-[85%]">${escHtml(text)}</div>`;
+        area.appendChild(div);
+    } else {
+        const div = document.createElement('div');
+        div.className = 'flex gap-2 ai-msg-enter';
+
+        // Parse risk score if present
+        let riskScore = null;
+        const riskMatch = text.match(/食安風險評分[：:]\s*(\d+)\s*\/\s*10/);
+        if (riskMatch) riskScore = parseInt(riskMatch[1]);
+
+        // Format text: bold **..**, line breaks, lists
+        let formatted = escHtml(text)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+
+        div.innerHTML = `
+            <div class="w-6 h-6 rounded-full bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-700 mt-0.5">
+                <i data-lucide="sparkles" class="w-3 h-3 text-emerald-400"></i>
+            </div>
+            <div class="bg-[#0b3829] p-2.5 rounded-lg rounded-tl-none border border-[#135740] text-xs leading-relaxed flex-1">${formatted}</div>`;
+        area.appendChild(div);
+
+        // Update risk badge
+        if (riskScore !== null) updateRiskBadge(riskScore);
+    }
+
+    area.scrollTop = area.scrollHeight;
+    lucide.createIcons();
+}
+
+function showTypingIndicator() {
+    const area = document.getElementById('ai-chat-area');
+    const div = document.createElement('div');
+    div.id = 'typing-indicator';
+    div.className = 'flex gap-2';
+    div.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-700">
+            <i data-lucide="sparkles" class="w-3 h-3 text-emerald-400"></i>
+        </div>
+        <div class="bg-[#0b3829] p-2.5 rounded-lg rounded-tl-none border border-[#135740] text-xs flex items-center gap-1.5">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+        </div>`;
+    area.appendChild(div);
+    area.scrollTop = area.scrollHeight;
+    lucide.createIcons();
+}
+
+function removeTypingIndicator() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+}
+
+function updateRiskBadge(score) {
+    const badge = document.getElementById('risk-badge');
+    badge.textContent = `風險 ${score}/10`;
+    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full ' +
+        (score <= 3 ? 'risk-badge-low' : score <= 6 ? 'risk-badge-medium' : 'risk-badge-high');
+    badge.classList.remove('hidden');
+}
+
+async function sendAiMessage() {
+    if (isAiLoading) return;
+    const input = document.getElementById('ai-user-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    appendChatMessage('user', msg);
+    isAiLoading = true;
+    document.getElementById('ai-send-btn').disabled = true;
+    showTypingIndicator();
+
+    try {
+        const reply = await callGeminiApi(msg);
+        removeTypingIndicator();
+        if (reply) appendChatMessage('assistant', reply);
+    } catch (err) {
+        removeTypingIndicator();
+        appendChatMessage('assistant', `⚠️ 呼叫失敗：${err.message}。請確認 API Key 是否正確。`);
+    } finally {
+        isAiLoading = false;
+        document.getElementById('ai-send-btn').disabled = false;
+    }
+}
+
+// ─────────────────────────────────────────
+//  AUTO-AUDIT TODAY'S DATA
+// ─────────────────────────────────────────
+function auditTodayData() {
+    if (isAiLoading) return;
+
+    const ccp1 = document.getElementById('ccp1-val').value;
+    const ccp2 = document.getElementById('ccp2-val').value;
+    const checks = ['check1','check2','check3','check4'].map(id =>
+        document.getElementById(id).checked ? '✅ 完成' : '❌ 未完成'
+    );
+
+    const today = new Date().toLocaleDateString('zh-TW');
+    const summary = `【${today} 每日 HACCP 自主稽核紀錄自動匯入】
+
+📦 貯存區
+- 冷凍庫溫度確認（-18°C 以下）：${checks[0]}
+- 冷藏庫溫度確認（7°C 以下）：${checks[1]}
+
+🔪 作業管控
+- 生熟食動線分流：${checks[2]}
+- 配膳人員手部消毒與防護帽：${checks[3]}
+
+🌡️ CCP 關鍵管制點
+- CCP1 烹調中心溫度：${ccp1 ? ccp1 + '°C' : '未輸入'}
+- CCP2 熱存溫度：${ccp2 ? ccp2 + '°C' : '未輸入'}
+
+請依據上述紀錄：
+1. 分析今日是否有潛在的交叉污染或溫控風險
+2. 對照台灣 GHP 規範判斷各項是否合規
+3. 給予今日食安風險評分（1-10分）並提供改善建議`;
+
+    // Switch to unlocked screen if not already visible
+    if (document.getElementById('ai-lock-screen').classList.contains('hidden') === false) {
+        showToast('請先輸入 API Key 以啟用 AI 稽核', 'error'); return;
+    }
+
+    const inputEl = document.getElementById('ai-user-input');
+    inputEl.value = '';
+    appendChatMessage('user', `[自動匯入] 請分析今日 ${today} 的 HACCP 稽核紀錄`);
+    isAiLoading = true;
+    document.getElementById('ai-send-btn').disabled = true;
+    showTypingIndicator();
+
+    // Inject into history without showing full prompt in chat
+    chatHistory.push({ role: 'user', parts: [{ text: summary }] });
+
+    const contents = chatHistory.map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: m.parts || [{ text: m.content || '' }]
+    }));
+
+    _geminiRequest(contents).then(text => {
+        removeTypingIndicator();
+        chatHistory.push({ role: 'assistant', parts: [{ text }] });
+        appendChatMessage('assistant', text);
+    }).catch(err => {
+        removeTypingIndicator();
+        appendChatMessage('assistant', `⚠️ 呼叫失敗：${err.message}`);
+    }).finally(() => {
+        isAiLoading = false;
+        document.getElementById('ai-send-btn').disabled = false;
+    });
+}
+
+// ─────────────────────────────────────────
+//  UTILITY
+// ─────────────────────────────────────────
+function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const isSuccess = type === 'success';
+    toast.className = `${isSuccess ? 'bg-emerald-600' : 'bg-rose-600'} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-10 opacity-0`;
+    toast.innerHTML = `<i data-lucide="${isSuccess ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 flex-shrink-0"></i><span class="text-sm font-medium">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => toast.classList.remove('translate-y-10','opacity-0'), 10);
+    setTimeout(() => { toast.classList.add('translate-y-10','opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ─────────────────────────────────────────
+//  FLOW TABS
+// ─────────────────────────────────────────
+function switchTab(tabId, btnId) {
+    document.querySelectorAll('.flow-tab-content').forEach(c => { c.classList.add('hidden'); c.classList.remove('block'); });
+    document.querySelectorAll('.flow-tab-btn').forEach(b => { b.classList.remove('border-emerald-600'); b.classList.add('border-transparent'); });
+    document.getElementById(tabId).classList.remove('hidden');
+    document.getElementById(tabId).classList.add('block');
+    document.getElementById(btnId).classList.remove('border-transparent');
+    document.getElementById(btnId).classList.add('border-emerald-600');
+}
+
+// ─────────────────────────────────────────
+//  WEIGHT CALCULATOR
+// ─────────────────────────────────────────
+function calculateTotal() {
+    const rice = parseInt(document.getElementById('slider-rice').value) || 0;
+    const braised = parseInt(document.getElementById('slider-braised').value) || 0;
+    const veg = parseInt(document.getElementById('slider-vegetable').value) || 0;
+    document.getElementById('weight-rice-val').textContent = rice + ' 克';
+    document.getElementById('box-rice-val').textContent = rice + 'g';
+    document.getElementById('weight-braised-val').textContent = braised + ' 克';
+    document.getElementById('box-braised-val').textContent = braised + 'g';
+    document.getElementById('weight-vegetable-val').textContent = veg + ' 克';
+    document.getElementById('box-veg-val').textContent = veg + 'g';
+    const total = rice + braised + veg;
+    const display = document.getElementById('weight-total-display');
+    display.textContent = total;
+    const statusCard = document.getElementById('status-card');
+    const iconBox = document.getElementById('status-icon-box');
+    const icon = document.getElementById('status-icon');
+    const title = document.getElementById('status-title');
+    const desc = document.getElementById('status-desc');
+    if (total >= 475 && total <= 525) {
+        display.className = 'text-4xl font-black text-emerald-600 transition-colors duration-300';
+        statusCard.className = 'bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl flex items-center gap-3 transition-colors duration-300';
+        iconBox.className = 'bg-emerald-500 text-white p-2 rounded-full shadow-sm flex-shrink-0';
+        icon.setAttribute('data-lucide','check-circle');
+        title.textContent = '檢驗結果：符合規範'; title.className = 'text-sm font-bold text-emerald-900';
+        desc.textContent = '落於標準區間 475g-525g 內，可進行出貨。'; desc.className = 'text-[11px] text-emerald-700';
+    } else {
+        display.className = 'text-4xl font-black text-rose-600 transition-colors duration-300';
+        statusCard.className = 'bg-rose-50 border border-rose-200 p-3.5 rounded-xl flex items-center gap-3 transition-colors duration-300';
+        iconBox.className = 'bg-rose-500 text-white p-2 rounded-full shadow-sm flex-shrink-0';
+        icon.setAttribute('data-lucide','x-circle');
+        title.textContent = '檢驗結果：重量不符'; title.className = 'text-sm font-bold text-rose-900';
+        desc.textContent = total < 475 ? '低於標準，有客訴風險，請增加配菜量。' : '高於標準，造成食材成本浪費，請減少配膳。';
+        desc.className = 'text-[11px] text-rose-700';
+    }
+    lucide.createIcons();
+}
+
+// ─────────────────────────────────────────
+//  CHECKLIST + SHIPPING
+// ─────────────────────────────────────────
+function toggleCheckbox(id) {
+    const cb = document.getElementById(id);
+    cb.checked = !cb.checked;
+    checkProgress();
+}
+
+function checkProgress() {
+    const checkboxes = document.querySelectorAll('.checklist-item');
+    const ccp1Input = document.getElementById('ccp1-val').value;
+    const ccp2Input = document.getElementById('ccp2-val').value;
+    const ccp1Status = document.getElementById('ccp1-status');
+    const ccp2Status = document.getElementById('ccp2-status');
+    let checkedCount = 0;
+    checkboxes.forEach(cb => { if(cb.checked) checkedCount++; });
+    let completedItems = checkedCount;
+    const totalItems = checkboxes.length + 2;
+    let ccp1Pass = false, ccp2Pass = false;
+    if (ccp1Input) {
+        ccp1Pass = parseFloat(ccp1Input) >= 75;
+        if (ccp1Pass) { completedItems++; ccp1Status.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> 符合規範'; ccp1Status.className = 'ml-2 text-xs text-emerald-700 bg-emerald-100 px-2 py-1 rounded border border-emerald-200 flex items-center gap-1'; }
+        else { ccp1Status.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i> 溫度不足'; ccp1Status.className = 'ml-2 text-xs text-rose-700 bg-rose-100 px-2 py-1 rounded border border-rose-200 flex items-center gap-1'; }
+    } else { ccp1Status.innerHTML = '<i data-lucide="minus" class="w-3 h-3"></i> 待確認'; ccp1Status.className = 'ml-2 text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200 flex items-center gap-1'; }
+    if (ccp2Input) {
+        ccp2Pass = parseFloat(ccp2Input) >= 60;
+        if (ccp2Pass) { completedItems++; ccp2Status.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> 符合規範'; ccp2Status.className = 'ml-2 text-xs text-emerald-700 bg-emerald-100 px-2 py-1 rounded border border-emerald-200 flex items-center gap-1'; }
+        else { ccp2Status.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i> 溫度不足'; ccp2Status.className = 'ml-2 text-xs text-rose-700 bg-rose-100 px-2 py-1 rounded border border-rose-200 flex items-center gap-1'; }
+    } else { ccp2Status.innerHTML = '<i data-lucide="minus" class="w-3 h-3"></i> 待確認'; ccp2Status.className = 'ml-2 text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200 flex items-center gap-1'; }
+    const percentage = Math.round((completedItems / totalItems) * 100);
+    document.getElementById('progress-text').textContent = `${percentage}% (${completedItems}/${totalItems} 完成)`;
+    document.getElementById('progress-bar').style.width = `${percentage}%`;
+    const shippingBlock = document.getElementById('shipping-block');
+    const shippingBtn = document.getElementById('shipping-btn');
+    if (percentage === 100) {
+        shippingBlock.className = 'flex-1 flex flex-col items-center justify-center bg-emerald-50/50 rounded-xl border border-emerald-100 p-6 text-center mb-6 transition-colors duration-300';
+        shippingBlock.innerHTML = `<div class="bg-emerald-100 p-4 rounded-full mb-4 text-emerald-600"><i data-lucide="check-circle" class="w-8 h-8"></i></div><h4 class="text-sm font-bold text-emerald-800 mb-2">已解鎖：符合出貨標準</h4><p class="text-[11px] text-emerald-600">各項食安稽核指標均已達標，HACCP 表單符合規範。<br>您現在可以產生憑證並進行出貨。</p>`;
+        shippingBtn.className = 'w-full py-3 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md cursor-pointer flex justify-center items-center gap-2 transition-all duration-300';
+        shippingBtn.disabled = false;
+        shippingBtn.onclick = () => showToast('出貨單產生成功！HACCP 合格憑證已記錄。', 'success');
+    } else {
+        shippingBlock.className = 'flex-1 flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-slate-100 p-6 text-center mb-6 transition-colors duration-300';
+        shippingBlock.innerHTML = `<div class="bg-amber-100 p-4 rounded-full mb-4 text-amber-500"><i data-lucide="lock" class="w-8 h-8"></i></div><h4 class="text-sm font-bold text-slate-800 mb-2">鎖定：未達出貨標準</h4><p class="text-[11px] text-slate-500">請先完成今日所有自主稽核項目並確認數值達標<br>(CCP1 ≥ 75°C, CCP2 ≥ 60°C)</p>`;
+        shippingBtn.className = 'w-full py-3 rounded-xl font-bold text-sm bg-slate-200 text-slate-400 cursor-not-allowed flex justify-center items-center gap-2 transition-all duration-300';
+        shippingBtn.disabled = true;
+        shippingBtn.onclick = null;
+    }
+    lucide.createIcons();
+}
+
+function resetChecklist() {
+    document.querySelectorAll('.checklist-item').forEach(cb => cb.checked = false);
+    document.getElementById('ccp1-val').value = '';
+    document.getElementById('ccp2-val').value = '';
+    checkProgress();
+    showToast('已重設今日點檢項目', 'success');
+}
+</script>
+</body>
+</html>
