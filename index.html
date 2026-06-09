@@ -7,7 +7,7 @@
     <!-- 載入 Tailwind CSS 用於現代化排版與樣式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Google Fonts 提升中英文字體質感 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=300;400;500;700;900&family=Playfair+Display:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
         body { 
@@ -29,6 +29,26 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        
+        /* ✨ 完美比例方案: 使用 object-contain 完整顯示圖片 */
+        .cert-image-container {
+            aspect-ratio: 1.414;           /* A4 寬幅比例 */
+            min-height: 320px;
+            max-height: 400px;
+            /* 溫暖的漸變背景，襯托證照圖片 */
+            background: linear-gradient(135deg, #f5f3f0 0%, #ede6df 100%);
+            /* 確保圖片居中顯示 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 響應式調整: 手機上較小 */
+        @media (max-width: 640px) {
+            .cert-image-container {
+                max-height: 280px;
+            }
         }
     </style>
     <script>
@@ -84,10 +104,6 @@
                     </p>
                 </div>
                 
-                
-            
-        
-                
                 <!-- 快速聯繫捷徑 -->
                 <a href="#contact" 
                    class="smooth-transition inline-flex items-center gap-2 bg-stone-100 text-stone-700 hover:bg-stone-200 px-5 py-3 rounded-xl text-sm font-medium border border-stone-200">
@@ -114,7 +130,7 @@
             </div>
         </section>
 
-        <!-- 專業證照 (重點優化：可放圖片大小與燈箱放大) -->
+        <!-- 專業證照 -->
         <section class="mb-16">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6 border-l-4 border-amber-700 pl-3">
                 <h2 class="text-xl font-bold text-stone-800 flex items-center gap-2">
@@ -130,13 +146,13 @@
 
                 <!-- 證照 1 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
-                    <!-- 圖片容器 ( aspect-[1.414/1] 為 A4 橫式完美比例 ) -->
-                    <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer" 
+                    <!-- ✨ 完美比例容器：使用 object-contain 完整顯示圖片 -->
+                    <div class="relative cert-image-container w-full overflow-hidden cursor-pointer" 
                          onclick="window.open('https://s7887631.github.io/PORTFOLAO/IMAGES/haccp%20a1.png.png', '_blank')">
-                        <!-- 證照縮圖 (採用 onerror 防錯機制，若無實際圖片則自動套用下方美麗的 fallback 樣式) -->
+                        <!-- 圖片使用 object-contain: 不裁切，完整顯示 -->
                         <img src="https://s7887631.github.io/PORTFOLAO/IMAGES/haccp%20a1.png.png" 
                              alt="HACCP 60 AB 級證書" 
-                             class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
+                             class="w-full h-full object-contain object-center group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, 'HACCP 60 AB')">
                         <!-- 懸停遮罩 -->
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
@@ -166,11 +182,11 @@
 
                 <!-- 證照 2 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
-                    <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
+                    <div class="relative cert-image-container w-full overflow-hidden cursor-pointer"
                          onclick="window.open('https://s7887631.github.io/PORTFOLAO/IMAGES/廚師證照.png', '_blank')">
                         <img src="https://s7887631.github.io/PORTFOLAO/IMAGES/廚師證照.png" 
                              alt="中餐烹飪丙級技術士" 
-                             class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
+                             class="w-full h-full object-contain object-center group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '中餐丙級')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
                             <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
@@ -198,11 +214,11 @@
 
                 <!-- 證照 3 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
-                    <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
+                    <div class="relative cert-image-container w-full overflow-hidden cursor-pointer"
                          onclick="window.open('https://github.com/s7887631/PORTFOLAO/blob/main/IMAGES/portfolio01.pdf', '_blank')">
                         <img src="https://raw.githubusercontent.com/s7887631/PORTFOLAO/main/IMAGES/safety_cert.jpg" 
                              alt="數位AI生成訓練證書" 
-                             class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
+                             class="w-full h-full object-contain object-center group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '安全衛生')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
                             <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
@@ -230,11 +246,11 @@
 
                 <!-- 證照 4 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
-                    <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
+                    <div class="relative cert-image-container w-full overflow-hidden cursor-pointer"
                          onclick="window.open('https://s7887631.github.io/PORTFOLAO/IMAGES/office.png', '_blank')">
                         <img src="https://s7887631.github.io/PORTFOLAO/IMAGES/office.png" 
                              alt="word Excel PowerPoint 證書" 
-                             class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
+                             class="w-full h-full object-contain object-center group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, 'MS Office')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
                             <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
@@ -262,11 +278,11 @@
 
                 <!-- 證照 5 -->
                 <div class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 smooth-transition flex flex-col">
-                    <div class="relative aspect-[1.414/1] w-full bg-stone-100 overflow-hidden cursor-pointer"
+                    <div class="relative cert-image-container w-full overflow-hidden cursor-pointer"
                          onclick="window.open('https://s7887631.github.io/PORTFOLAO/IMAGES/中西式點心烘培訓練1.png.png', '_blank')">
                         <img src="https://s7887631.github.io/PORTFOLAO/IMAGES/中西式點心烘培訓練1.png.png" 
                              alt="多元化餐飲烘焙訓練 380H" 
-                             class="w-full h-full object-cover group-hover:scale-105 smooth-transition"
+                             class="w-full h-full object-contain object-center group-hover:scale-105 smooth-transition"
                              onerror="handleImageError(this, '烘焙380H')">
                         <div class="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 smooth-transition flex items-center justify-center">
                             <span class="text-xs font-semibold text-white bg-stone-900/80 px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
